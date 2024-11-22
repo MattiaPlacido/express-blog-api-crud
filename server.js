@@ -7,6 +7,9 @@ const postsRouter = require("./router/posts");
 const server = express();
 const port = 3000;
 
+//body parser per far si che riesca ad interpretare il body
+server.use(express.json());
+
 //associo questo file al file di routing
 server.use("/", postsRouter);
 

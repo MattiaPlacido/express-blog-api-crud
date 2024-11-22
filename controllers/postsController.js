@@ -18,7 +18,7 @@ function show(req, res) {
   if (id && !isNaN(id)) {
     const targetedPost = posts.find((post) => post.id == id);
     //id non trovato
-    if (!targetedPost) res.status(404).json({ error: "Id not found" });
+    if (!targetedPost) return res.status(404).json({ error: "Id not found" });
     //id trovato
     else res.json(targetedPost);
   } //id non valido
@@ -31,20 +31,54 @@ function show(req, res) {
 
 //store
 function store(req, res) {
-  res.send("Il tuo nuovo post è stato creato");
+  console.log(req.body);
+  //prendo i dati dal body inviato nella request
+  const { titolo, contenuto, immagine, tags } = req.body;
+
+  let lastId; //cerco l'id più grande e assegno l'id subito dopo
+  posts.forEach((post) => {
+    if (!lastId || lastId <= post.id) lastId = post.id + 1;
+  });
+
+  //controllo i parametri
+  if (!titolo || !contenuto || !immagine || !tags) {
+    //non controllo che tags sia un array perchè il post potrebbe anche averne solo 1
+    return res.status(400).json("invalid parameters");
+  }
+
+  //creo il post
+  const newPost = { id: lastId, titolo, contenuto, immagine, tags };
+
+  //pusho il post dentro l'array dei post e lo mando all'utente
+  posts.push(newPost);
+  res.status(200).json(newPost);
 }
 
 //update
 function update(req, res) {
   const id = req.params.id;
+  console.log(req.body);
 
   //id valido
   if (id && !isNaN(id)) {
     const targetedPost = posts.find((post) => post.id == id);
     //id non trovato
-    if (!targetedPost) res.status(404).json({ error: "Id not found" });
+    if (!targetedPost) return res.status(404).json({ error: "Id not found" });
     //id trovato
-    else res.send("Il post " + req.params.id + " è stato aggiornato"); // non mi vanno i backtick
+    else {
+      //prendo i dati dal body
+      const { titolo, contenuto, immagine, tags } = req.body;
+      //controllo i parametri siano validi
+      if (!titolo || !contenuto || !immagine || !tags)
+        return res.status(400).json("invalid parameters");
+
+      //sostituisco ai dati del post nell'id quelli inseriti dall'utente
+      targetedPost.titolo = titolo;
+      targetedPost.contenuto = contenuto;
+      targetedPost.immagine = immagine;
+      targetedPost.tags = tags;
+      res.status(200).json(targetedPost);
+    }
   } //id non valido
   else {
     res.status(422).json({
