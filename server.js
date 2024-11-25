@@ -2,6 +2,8 @@
 //importazione moduli
 const express = require("express");
 const postsRouter = require("./router/posts");
+const notFound = require("./middlewares/notFound");
+const errorHandler = require("./middlewares/errorHandler");
 
 //dichiaro una variabile come express e la porta su cui ascolto
 const server = express();
@@ -12,6 +14,10 @@ server.use(express.json());
 
 //associo questo file al file di routing
 server.use("/", postsRouter);
+
+//registrazione del resto dei middleware sotto le route
+server.use(notFound);
+server.use(errorHandler);
 
 //ELABORAZIONE DATI
 

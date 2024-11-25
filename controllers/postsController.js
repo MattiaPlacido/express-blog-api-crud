@@ -18,14 +18,18 @@ function show(req, res) {
   if (id && !isNaN(id)) {
     const targetedPost = posts.find((post) => post.id == id);
     //id non trovato
-    if (!targetedPost) return res.status(404).json({ error: "Id not found" });
+    if (!targetedPost) {
+      const err = new Error("ID hasnt been found");
+      err.code = 404;
+      throw err;
+    }
     //id trovato
     else res.json(targetedPost);
   } //id non valido
   else {
-    res.status(422).json({
-      error: "Id not valid",
-    });
+    const err = new Error("Inserted ID is not valid ");
+    err.code = 400;
+    throw err;
   }
 }
 
@@ -43,7 +47,9 @@ function store(req, res) {
   //controllo i parametri
   if (!titolo || !contenuto || !immagine || !tags) {
     //non controllo che tags sia un array perchè il post potrebbe anche averne solo 1
-    return res.status(400).json("invalid parameters");
+    const err = new Error("Inserted parameters are invalid ");
+    err.code = 400;
+    throw err;
   }
 
   //creo il post
@@ -63,14 +69,21 @@ function update(req, res) {
   if (id && !isNaN(id)) {
     const targetedPost = posts.find((post) => post.id == id);
     //id non trovato
-    if (!targetedPost) return res.status(404).json({ error: "Id not found" });
+    if (!targetedPost) {
+      const err = new Error("ID hasnt been found");
+      err.code = 404;
+      throw err;
+    }
     //id trovato
     else {
       //prendo i dati dal body
       const { titolo, contenuto, immagine, tags } = req.body;
       //controllo i parametri siano validi
-      if (!titolo || !contenuto || !immagine || !tags)
-        return res.status(400).json("invalid parameters");
+      if (!titolo || !contenuto || !immagine || !tags) {
+        const err = new Error("Inserted parameters are invalid ");
+        err.code = 400;
+        throw err;
+      }
 
       //sostituisco ai dati del post nell'id quelli inseriti dall'utente
       targetedPost.titolo = titolo;
@@ -81,9 +94,9 @@ function update(req, res) {
     }
   } //id non valido
   else {
-    res.status(422).json({
-      error: "Id not valid",
-    });
+    const err = new Error("Inserted id is invalid ");
+    err.code = 400;
+    throw err;
   }
 }
 
@@ -96,11 +109,13 @@ function destroy(req, res) {
     const targetedPost = posts.find((post, index) => post.id == id);
     //id non presente nei dati
     if (!targetedPost) {
-      res.status(404).json({
-        error: "Id not found",
-      });
-      //id presente
-    } else {
+      const err = new Error("ID hasnt been found");
+      err.code = 404;
+      throw err;
+    }
+
+    //id presente
+    else {
       //cerco l'indice del post da eliminare perchè non posso soltanto avendolo appoggiato ad una variabile
       let postIndex;
       posts.forEach((post, index) => {
@@ -110,13 +125,13 @@ function destroy(req, res) {
       posts.splice(postIndex, 1);
       //comunico la lista di elementi presenti e che l'operazione è andata a buon fine
       console.log(posts);
-      res.sendStatus(204);
+      res.json("Il post è stato eliminato");
     }
     //l'id non è valido
   } else {
-    res.status(400).json({
-      error: "Inserted content is not valid as an ID",
-    });
+    const err = new Error("Inserted ID is invalid ");
+    err.code = 400;
+    throw err;
   }
 }
 
