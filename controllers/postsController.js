@@ -1,13 +1,15 @@
 const posts = require("../data/posts_data.js");
 
+const effectivePosts = posts.posts;
+
 //index
 function index(req, res) {
-  const counter = posts.length;
-  const output = {
-    posts: posts,
-    counter: counter,
-  };
-  res.json(output);
+  // const counter = posts.length;
+  // const output = {
+  //   posts: posts,
+  //   counter: counter,
+  // };
+  res.json(posts);
 }
 
 //show
@@ -16,7 +18,7 @@ function show(req, res) {
 
   //id valido
   if (id && !isNaN(id)) {
-    const targetedPost = posts.find((post) => post.id == id);
+    const targetedPost = effectivePosts.find((post) => post.id == id);
     //id non trovato
     if (!targetedPost) {
       const err = new Error("ID hasnt been found");
@@ -40,7 +42,7 @@ function store(req, res) {
   const { titolo, contenuto, immagine, tags } = req.body;
 
   let lastId; //cerco l'id più grande e assegno l'id subito dopo
-  posts.forEach((post) => {
+  effectivePosts.forEach((post) => {
     if (!lastId || lastId <= post.id) lastId = post.id + 1;
   });
 
@@ -56,7 +58,7 @@ function store(req, res) {
   const newPost = { id: lastId, titolo, contenuto, immagine, tags };
 
   //pusho il post dentro l'array dei post e lo mando all'utente
-  posts.push(newPost);
+  effectivePosts.push(newPost);
   res.status(200).json(newPost);
 }
 
@@ -67,7 +69,7 @@ function update(req, res) {
 
   //id valido
   if (id && !isNaN(id)) {
-    const targetedPost = posts.find((post) => post.id == id);
+    const targetedPost = effectivePosts.find((post) => post.id == id);
     //id non trovato
     if (!targetedPost) {
       const err = new Error("ID hasnt been found");
@@ -106,7 +108,7 @@ function destroy(req, res) {
   //l'id è valido
   if (id && !isNaN(id)) {
     //cerco se l'id corrisponde a qualcosa
-    const targetedPost = posts.find((post, index) => post.id == id);
+    const targetedPost = effectivePosts.find((post, index) => post.id == id);
     //id non presente nei dati
     if (!targetedPost) {
       const err = new Error("ID hasnt been found");
@@ -118,11 +120,11 @@ function destroy(req, res) {
     else {
       //cerco l'indice del post da eliminare perchè non posso soltanto avendolo appoggiato ad una variabile
       let postIndex;
-      posts.forEach((post, index) => {
+      effectivePosts.forEach((post, index) => {
         if (post.id == id) postIndex = index;
       });
       //elimino il post richiesto
-      posts.splice(postIndex, 1);
+      effectivePosts.splice(postIndex, 1);
       //comunico la lista di elementi presenti e che l'operazione è andata a buon fine
       console.log(posts);
       res.json("Il post è stato eliminato");
