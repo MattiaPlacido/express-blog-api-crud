@@ -1,7 +1,6 @@
 //DICHIARAZIONE VARIABILI / REQUIREMENTS / OGGETTI / FUNZIONI
 //importazione moduli
 const express = require("express");
-const cors = require("cors");
 const postsRouter = require("./router/posts");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
@@ -19,7 +18,6 @@ server.use("/", postsRouter);
 //registrazione del resto dei middleware sotto le route
 server.use(notFound);
 server.use(errorHandler);
-server.use(cors());
 
 //ELABORAZIONE DATI
 

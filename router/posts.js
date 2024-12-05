@@ -1,7 +1,8 @@
 //impostazione router
 const express = require("express");
 const router = express.Router();
-
+const cors = require("cors");
+router.use(cors());
 //importo il controller
 const postsController = require("../controllers/postsController.js");
 
