@@ -49,31 +49,34 @@ function show(req, res) {
 }
 
 //store
-function store(req, res) {
-  console.log(req.body);
-  //prendo i dati dal body inviato nella request
-  const { id, title, content, image, category, published } = req.body;
+//BONUS : senza tags
+//json di esempio :
+// {
+//       "image": "prova.jpg",
+//       "title":  "Titolo prova",
+//       "content": "Contenuto prova"
+// }
 
-  let lastId; //cerco l'id più grande e assegno l'id subito dopo
-  effectivePosts.forEach((post) => {
-    if (!lastId || lastId <= post.id) lastId = post.id + 1;
-  });
+function store(req, res) {
+  //DEBUG
+  console.log(req.body);
+  //prendo i dati dal body
+  const { image, content, title } = req.body;
 
   //controllo i parametri
-  if (!title || !content || !category) {
-    //non controllo che tags sia un array perchè il post potrebbe anche averne solo 1
+  if (!title || !content || !image) {
     const err = new Error("Inserted parameters are invalid ");
     err.code = 400;
     throw err;
+  } else {
+    //parametri validi
+    const sql = "INSERT INTO posts (title,content,image) VALUES (?,?,?)";
+    connection.query(sql, [title, content, image], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      res.status(204);
+      console.log("Store eseguito con successo");
+    });
   }
-
-  //creo il post
-  const newPost = { id, title, content, image, category, published };
-  newPost.id = lastId;
-
-  //pusho il post dentro l'array dei post e lo mando all'utente
-  effectivePosts.push(newPost);
-  res.status(200).json(newPost);
 }
 
 //update
@@ -128,7 +131,7 @@ function destroy(req, res) {
       if (results.length === 0) {
         return res.status(404).json({ error: "Post not found" });
       }
-      res.json(`Il post di ID ${id}  stato eliminato`);
+      res.status(204).json(`Il post di ID ${id}  stato eliminato`);
       console.log("Destroy eseguito con successo!");
     });
     //l'id non è valido
