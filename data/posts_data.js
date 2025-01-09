@@ -6,7 +6,7 @@ export const posts = [
       "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit animi perspiciatis consequuntur vero at necessitatibus nostrum blanditiis, natus eum? Numquam nulla asperiores cumque, repudiandae odit alias aliquam nihil earum commodi.",
     image: "",
     published: true,
-    category: "Music",
+    category: "music",
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const posts = [
       "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit animi perspiciatis consequuntur vero at necessitatibus nostrum blanditiis, natus eum? Numquam nulla asperiores cumque, repudiandae odit alias aliquam nihil earum commodi.",
     image: "",
     published: true,
-    category: "Sport",
+    category: "sport",
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const posts = [
       "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit animi perspiciatis consequuntur vero at necessitatibus nostrum blanditiis, natus eum? Numquam nulla asperiores cumque, repudiandae odit alias aliquam nihil earum commodi.",
     image: "",
     published: false,
-    category: "News",
+    category: "news",
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const posts = [
       "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit animi perspiciatis consequuntur vero at necessitatibus nostrum blanditiis, natus eum? Numquam nulla asperiores cumque, repudiandae odit alias aliquam nihil earum commodi.",
     image: "",
     published: false,
-    category: "Gaming",
+    category: "gaming",
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const posts = [
       "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit animi perspiciatis consequuntur vero at necessitatibus nostrum blanditiis, natus eum? Numquam nulla asperiores cumque, repudiandae odit alias aliquam nihil earum commodi.",
     image: "",
     published: true,
-    category: "Politics",
+    category: "politics",
   },
 ];
 

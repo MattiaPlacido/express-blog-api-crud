@@ -12,6 +12,11 @@ function index(req, res) {
   res.json(posts);
 }
 
+function idIndex(req, res) {
+  const idArray = posts.posts.map((post) => post.id);
+  res.json(idArray);
+}
+
 //show
 function show(req, res) {
   const id = req.params.id;
@@ -39,7 +44,7 @@ function show(req, res) {
 function store(req, res) {
   console.log(req.body);
   //prendo i dati dal body inviato nella request
-  const { titolo, contenuto, immagine, tags } = req.body;
+  const { id, title, content, image, category, published } = req.body;
 
   let lastId; //cerco l'id più grande e assegno l'id subito dopo
   effectivePosts.forEach((post) => {
@@ -47,7 +52,7 @@ function store(req, res) {
   });
 
   //controllo i parametri
-  if (!titolo || !contenuto || !immagine || !tags) {
+  if (!title || !content || !category) {
     //non controllo che tags sia un array perchè il post potrebbe anche averne solo 1
     const err = new Error("Inserted parameters are invalid ");
     err.code = 400;
@@ -55,7 +60,8 @@ function store(req, res) {
   }
 
   //creo il post
-  const newPost = { id: lastId, titolo, contenuto, immagine, tags };
+  const newPost = { id, title, content, image, category, published };
+  newPost.id = lastId;
 
   //pusho il post dentro l'array dei post e lo mando all'utente
   effectivePosts.push(newPost);
@@ -79,19 +85,16 @@ function update(req, res) {
     //id trovato
     else {
       //prendo i dati dal body
-      const { titolo, contenuto, immagine, tags } = req.body;
+      const { title, content, image, category, published } = req.body;
       //controllo i parametri siano validi
-      if (!titolo || !contenuto || !immagine || !tags) {
+      if (!title || !content) {
         const err = new Error("Inserted parameters are invalid ");
         err.code = 400;
         throw err;
       }
 
       //sostituisco ai dati del post nell'id quelli inseriti dall'utente
-      targetedPost.titolo = titolo;
-      targetedPost.contenuto = contenuto;
-      targetedPost.immagine = immagine;
-      targetedPost.tags = tags;
+
       res.status(200).json(targetedPost);
     }
   } //id non valido
@@ -137,4 +140,4 @@ function destroy(req, res) {
   }
 }
 
-module.exports = { index, show, store, update, destroy };
+module.exports = { index, show, store, update, destroy, idIndex };
