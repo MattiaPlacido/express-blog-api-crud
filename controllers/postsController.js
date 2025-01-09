@@ -20,8 +20,25 @@ function show(req, res) {
   if (id && !isNaN(id)) {
     connection.query(sql, [id], (err, results) => {
       if (err) return res.status(500).json({ error: "Database query failed" });
-      res.json(results);
-      console.log("Show eseguito con successo!");
+
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+
+      //salvo i dati del post
+      const post = results[0];
+
+      const tagsQuerySql =
+        "SELECT tags.label FROM posts JOIN post_tag ON posts.id = post_tag.post_id JOIN tags ON post_tag.tag_id = tags.id WHERE posts.id = ?";
+
+      connection.query(tagsQuerySql, [id], (err, tagsResults) => {
+        //aggiungo le tags corrispondenti al post
+        post.tags = tagsResults.map((tag) => tag.label);
+
+        //restituisco il post sia come risposta che come console log per assicurarmi
+        res.json(post);
+        console.log("Show eseguito con successo: ", post);
+      });
     });
   } //id non valido
   else {
@@ -105,10 +122,15 @@ function destroy(req, res) {
   //l'id è valido
   if (id && !isNaN(id)) {
     connection.query(sql, [id], (err, results) => {
+      //Query fallita
       if (err) return res.status(500).json({ error: "Database query failed" });
+      //post non esistente
+      if (results.length === 0) {
+        return res.status(404).json({ error: "Post not found" });
+      }
+      res.json(`Il post di ID ${id}  stato eliminato`);
+      console.log("Destroy eseguito con successo!");
     });
-    res.json(`Il post di ID ${id}  stato eliminato`);
-    console.log("Destroy eseguito con successo!");
     //l'id non è valido
   } else {
     const err = new Error("Inserted ID is invalid ");
