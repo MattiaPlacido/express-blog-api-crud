@@ -1,37 +1,28 @@
-const posts = require("../data/posts_data.js");
-
-const effectivePosts = posts.posts;
+const connection = require("../data/db_connection.js");
 
 //index
-function index(req, res) {
-  // const counter = posts.length;
-  // const output = {
-  //   posts: posts,
-  //   counter: counter,
-  // };
-  res.json(posts);
-}
 
-function idIndex(req, res) {
-  const idArray = posts.posts.map((post) => post.id);
-  res.json(idArray);
+function index(req, res) {
+  const sql = "SELECT * FROM posts";
+  connection.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    res.json(results);
+    console.log("Index eseguito con successo!");
+  });
 }
 
 //show
 function show(req, res) {
   const id = req.params.id;
+  const sql = "SELECT * FROM posts WHERE id = ?";
 
   //id valido
   if (id && !isNaN(id)) {
-    const targetedPost = effectivePosts.find((post) => post.id == id);
-    //id non trovato
-    if (!targetedPost) {
-      const err = new Error("ID hasnt been found");
-      err.code = 404;
-      throw err;
-    }
-    //id trovato
-    else res.json(targetedPost);
+    connection.query(sql, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+      res.json(results);
+      console.log("Show eseguito con successo!");
+    });
   } //id non valido
   else {
     const err = new Error("Inserted ID is not valid ");
@@ -140,4 +131,4 @@ function destroy(req, res) {
   }
 }
 
-module.exports = { index, show, store, update, destroy, idIndex };
+module.exports = { index, show, store, update, destroy };

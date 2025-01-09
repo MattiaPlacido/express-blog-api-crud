@@ -41,7 +41,6 @@ router.get("/bacheca", (request, response) => {
 
 //index
 router.get("/", postsController.index);
-router.get("/posts-id", postsController.idIndex);
 
 //show
 router.get("/:id", postsController.show);
