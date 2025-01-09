@@ -3,9 +3,13 @@ const connection = require("../data/db_connection.js");
 //index
 
 function index(req, res) {
+  //query
   const sql = "SELECT * FROM posts";
-  connection.query(sql, (err, results) => {
+  //invio della query
+  connection.query(sql, (err, results) => {ù
+    //gestione errore query
     if (err) return res.status(500).json({ error: "Database query failed" });
+    //invio risultati
     res.json(results);
     console.log("Index eseguito con successo!");
   });
@@ -58,12 +62,10 @@ function show(req, res) {
 // }
 
 function store(req, res) {
-  //DEBUG
-  console.log(req.body);
   //prendo i dati dal body
   const { image, content, title } = req.body;
 
-  //controllo i parametri
+  //controllo i dati del body
   if (!title || !content || !image) {
     const err = new Error("Inserted parameters are invalid ");
     err.code = 400;
@@ -80,33 +82,35 @@ function store(req, res) {
 }
 
 //update
+//BONUS : senza cambio di tags
+// l'id è un parametro i dati sono nel body
+//json di esempio :
+// {
+//       "image": "prova.jpg",
+//       "title":  "Titolo prova",
+//       "content": "Contenuto prova"
+// }
 function update(req, res) {
   const id = req.params.id;
-  console.log(req.body);
 
   //id valido
   if (id && !isNaN(id)) {
-    const targetedPost = effectivePosts.find((post) => post.id == id);
-    //id non trovato
-    if (!targetedPost) {
-      const err = new Error("ID hasnt been found");
-      err.code = 404;
+    const { title, content, image } = req.body;
+
+    //controllo i dati del body
+    if (!title || !content || !image) {
+      const err = new Error("Inserted parameters are invalid ");
+      err.code = 400;
       throw err;
-    }
-    //id trovato
-    else {
-      //prendo i dati dal body
-      const { title, content, image, category, published } = req.body;
-      //controllo i parametri siano validi
-      if (!title || !content) {
-        const err = new Error("Inserted parameters are invalid ");
-        err.code = 400;
-        throw err;
-      }
-
-      //sostituisco ai dati del post nell'id quelli inseriti dall'utente
-
-      res.status(200).json(targetedPost);
+    } else {
+      const sql =
+        "UPDATE posts SET title = ?, content = ?, image = ? WHERE id = ?";
+      connection.query(sql, [title, content, image, id], (err, results) => {
+        if (err)
+          return res.status(500).json({ error: "Database query failed" });
+        res.status(204);
+        console.log("Update eseguito con successo");
+      });
     }
   } //id non valido
   else {
