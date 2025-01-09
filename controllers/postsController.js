@@ -99,30 +99,16 @@ function update(req, res) {
 //destroy
 function destroy(req, res) {
   const id = req.params.id;
+
+  const sql = "DELETE FROM posts WHERE id = ?";
+
   //l'id è valido
   if (id && !isNaN(id)) {
-    //cerco se l'id corrisponde a qualcosa
-    const targetedPost = effectivePosts.find((post, index) => post.id == id);
-    //id non presente nei dati
-    if (!targetedPost) {
-      const err = new Error("ID hasnt been found");
-      err.code = 404;
-      throw err;
-    }
-
-    //id presente
-    else {
-      //cerco l'indice del post da eliminare perchè non posso soltanto avendolo appoggiato ad una variabile
-      let postIndex;
-      effectivePosts.forEach((post, index) => {
-        if (post.id == id) postIndex = index;
-      });
-      //elimino il post richiesto
-      effectivePosts.splice(postIndex, 1);
-      //comunico la lista di elementi presenti e che l'operazione è andata a buon fine
-      console.log(posts);
-      res.json("Il post è stato eliminato");
-    }
+    connection.query(sql, [id], (err, results) => {
+      if (err) return res.status(500).json({ error: "Database query failed" });
+    });
+    res.json(`Il post di ID ${id}  stato eliminato`);
+    console.log("Destroy eseguito con successo!");
     //l'id non è valido
   } else {
     const err = new Error("Inserted ID is invalid ");
